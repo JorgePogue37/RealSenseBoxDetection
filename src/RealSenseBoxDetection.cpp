@@ -139,10 +139,10 @@ void processImage(Mat& color, Mat& hsv, Mat& hue, Mat& mask, Rect& trackWindow, 
 
         Mat element = getStructuringElement(MORPH_RECT, Size(9, 9));
         dilate(mask, camshiftbox, element);
-        
+
         vector<vector<Point>> contoursMask;
         findContours(camshiftbox, contoursMask, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
-            
+
         double maxArea = 0;
         for (const auto& contour : contoursMask) {
             Rect rect = boundingRect(contour);
@@ -152,7 +152,7 @@ void processImage(Mat& color, Mat& hsv, Mat& hue, Mat& mask, Rect& trackWindow, 
                 selection = Rect (rect.x + rect.width/4,rect.y + rect.height/4,rect.width/2, rect.height/2);
             }
         }
-        
+
         trackObject = -1;
 
         int ch[] = {0, 0};
@@ -272,7 +272,7 @@ vector<Eigen::Vector3d> markVertexDistances(Mat& image, const vector<Point>& bes
     findContours(maskPolygon, contours, RETR_LIST, CHAIN_APPROX_SIMPLE);
 
     drawContours(maskPolygon, contours, -1, Scalar(0), 12); //I reduce the area of the polygon mask by 10 pixels to restrict more the area and to be sure that the point I'm taking it's on the area od the box
-    
+
     vector<Eigen::Vector3d> spatialPoints;
 
     for (const auto& vertex : bestPolygon) {
@@ -414,7 +414,7 @@ void calcBoxOrientation(orthoedro& box) {
 
     centroid = (minPoint + maxPoint)/2;
 
-    // Calculate the angle 
+    // Calculate the angle
     auto angleToVertical = [&](const Eigen::Vector3d& point) {
         Eigen::Vector3d vec = point - centroid;
         return atan2(vec.x(), vec.y());
@@ -437,11 +437,11 @@ void calcBoxOrientation(orthoedro& box) {
     vector<Vector3d> RightSide, LeftSide;
     double xmeanSideA, xmeanSideB;
     for (const auto& vertex : sideA){
-        xmeanSideA += vertex.x(); 
+        xmeanSideA += vertex.x();
     }
     xmeanSideA = xmeanSideA / sideA.size();
     for (const auto& vertex : sideB){
-        xmeanSideB += vertex.x(); 
+        xmeanSideB += vertex.x();
     }
     xmeanSideB = xmeanSideB / sideB.size();
 
@@ -454,7 +454,7 @@ void calcBoxOrientation(orthoedro& box) {
         LeftSide = sideA;
     }
 
-    // Calculate the angle 
+    // Calculate the angle
     auto angleRight = [&](const Eigen::Vector3d& point) {
         Eigen::Vector3d vec = point - centroid;
         return atan2(vec.y(), vec.x());
@@ -475,10 +475,10 @@ void calcBoxOrientation(orthoedro& box) {
         return angleLeft(a) < angleLeft(b);
     });
 
-    box.measuredPoints.empty();
+    box.measuredPoints.clear();
     box.measuredPoints = RightSide;
     for (const auto& point : LeftSide){
-        box.measuredPoints.push_back(point); 
+        box.measuredPoints.push_back(point);
     }
 
     Eigen::Vector3d x;
@@ -502,7 +502,7 @@ void calcBoxOrientation(orthoedro& box) {
                 x = ((box.measuredPoints[1]-box.measuredPoints[2])+(box.measuredPoints[5]-box.measuredPoints[4]))/2;
             }
             else{
-                x = ((box.measuredPoints[1]-box.measuredPoints[2])+(box.measuredPoints[4]-box.measuredPoints[3]))/2;    
+                x = ((box.measuredPoints[1]-box.measuredPoints[2])+(box.measuredPoints[4]-box.measuredPoints[3]))/2;
             }
         }
         else{
@@ -510,7 +510,7 @@ void calcBoxOrientation(orthoedro& box) {
                 x = ((box.measuredPoints[0]-box.measuredPoints[1])+(box.measuredPoints[5]-box.measuredPoints[4]))/2;
             }
             else{
-                x = ((box.measuredPoints[0]-box.measuredPoints[1])+(box.measuredPoints[4]-box.measuredPoints[3]))/2;    
+                x = ((box.measuredPoints[0]-box.measuredPoints[1])+(box.measuredPoints[4]-box.measuredPoints[3]))/2;
             }
         }
         y = ((box.measuredPoints[3]-box.measuredPoints[2])+(box.measuredPoints[5]-box.measuredPoints[0]))/2;
@@ -566,11 +566,11 @@ void drawVertex(cv::Mat& image, const orthoedro& box, const rs2_intrinsics& intr
 
         Scalar color;
         if (i == 0) {
-            color = Scalar(0, 0, 255); 
+            color = Scalar(0, 0, 255);
         } else if (i == 7) {
-            color = Scalar(255, 0, 0); 
+            color = Scalar(255, 0, 0);
         } else {
-            color = Scalar(0, 255, 0); 
+            color = Scalar(0, 255, 0);
         }
 
         Point vertexPoint(static_cast<int>(pixel[0]), static_cast<int>(pixel[1]));
@@ -624,13 +624,13 @@ int main(int argc, char* argv[]) {
 
     rs2::align align_to_color(RS2_STREAM_COLOR);
     if (mode=="manual"){
- 
+
         namedWindow("View", WINDOW_AUTOSIZE);
         moveWindow("View", 80, 0);
 
         namedWindow("Options", WINDOW_AUTOSIZE);
 
-    
+
         createTrackbar("Vmin", "Options", NULL, 256, onVminChange);
         createTrackbar("Vmax", "Options", NULL, 256, onVmaxChange);
         createTrackbar("Smin", "Options", NULL, 256, onSminChange);
@@ -644,7 +644,7 @@ int main(int argc, char* argv[]) {
     }
 
     trackObject = -1;
-    
+
     Mat hsv, hue, mask, hist, backproj, camshiftbox;
     Rect trackWindow;
     int hsize = 16;
@@ -712,7 +712,7 @@ int main(int argc, char* argv[]) {
                         putText(image, "Center", centerPoint + Point(10, 0), FONT_HERSHEY_SIMPLEX, 0.5, Scalar(0, 0, 255), 2);
 
                         drawVertex(vertexImage, box, intr);
-                        
+
 
                     } catch (const std::exception& e) {
                         std::cerr << "Error calculating orthoedro's center: " << e.what() << std::endl;
@@ -736,13 +736,13 @@ int main(int argc, char* argv[]) {
 
         if (!depth_image_8bit.empty() && mode == "manual") {
             //cv::imshow("Depth Image", depth_image_8bit);
-        } 
-        
+        }
+
         if (selectObject && selection.width > 0 && selection.height > 0) {
             Mat roi(image, selection);
             bitwise_not(roi, roi);
         }
-        
+
         if (mode == "manual"){
             cv::Mat view1, view2, view;
             cv::cvtColor(edges, edges, cv::COLOR_GRAY2BGR);

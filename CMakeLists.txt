@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.24)
 
 project(RealSenseBoxDetection)
 
@@ -15,7 +15,7 @@ find_package(Eigen3 REQUIRED)
 
 add_subdirectory(include/tinyxml2)
 
-include_directories(${realsense2_INCLUDE_DIR} ${OpenCV_INCLUDE_DIRS} ${EIGEN3_INCLUDE_DIRS} include/tinyxml2 ${PCL_INCLUDE_DIRS})
+include_directories(${realsense2_INCLUDE_DIR} ${OpenCV_INCLUDE_DIRS} ${EIGEN3_INCLUDE_DIRS} include/tinyxml2 )
 
 target_link_libraries(RealSenseBoxDetection ${realsense2_LIBRARY} ${OpenCV_LIBS} Eigen3::Eigen tinyxml2)
 
